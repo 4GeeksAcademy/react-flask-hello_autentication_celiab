@@ -13,7 +13,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			user: null,
+			storeToken : false
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -46,6 +48,57 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+			login: async (newLogin)=>{
+				// const email= 'celia.bcn28@gmail.com'
+				// const password ='8264'
+
+				// const url = 'https://studious-space-meme-pjg46j5xjxxx3xww-3000.app.github.dev/login'
+				const resp = await fetch(process.env.BACKEND_URL + "/api/login", {
+					method: "POST",
+					headers: {"Content-Type":"application/json"},
+					body: JSON.stringify(newLogin)
+				})
+				if(!resp.ok) throw Error("There was a problem in the login request")
+					const data = await resp.json()
+				// Guarda el token en la localStorage
+				// También deberías almacenar el usuario en la store utilizando la función setItem
+				localStorage.setItem("jwt-token", data.token);
+				setStore({user: data.user})
+				return data
+			},
+			// private : async()=>{
+			// 	const token = localStorage.getItem("token")
+			// 	const resp = await fetch(process.env.BACKEND_URL + "/private", {
+			// 		method: "GET",
+			// 		headers: {
+			// 			"Content-Type":"application/json",
+			// 			"Authorization":"Bearer" + token  
+			// 		}
+			// 	})
+			// 	const data = await resp.json()
+			// }
+			logout:  ()=>{
+				localStorage.removeItem("jwt-token")
+				setStore({user: null})
+			},
+			register: async (email, password)=>{
+				const bodyData = {
+					email: email,
+					password: password
+				}
+				const resp = await fetch(process.env.BACKEND_URL + "/api/register", {
+					method: "POST",
+					headers: {"Content-Type":"application/json"},
+					body: JSON.stringify(bodyData)
+				})
+				const data = await resp.json()
+				return data
+			},
+			private: (token)=>{
+				const resp = fetch(process.env.BACKEND_URL + "/api/private")
+				const data = resp.json()
+				setStore({storeToken:true})
 			}
 		}
 	};
