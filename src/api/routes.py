@@ -33,7 +33,7 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
-@api.route('/register',methods=['POST'])
+@api.route('/register', methods=['POST'])
 def register():
     body=request.get_json(silent=True)
     if body == None:
@@ -55,11 +55,17 @@ def register():
 
 @api.route('/login', methods=['POST'])
 def login():
-    email=request.json.get("email",None)
-    password= request.json.get("password",None)
-    user= User.query.filter_by(email=email, password=password).first()
+    email = request.json.get("email",None)
+    password = request.json.get("password",None)
+    if email is None or password is None:
+        return jsonify({'msg':'campo vacío'}),401
+    user= User.query.filter_by(email=email).first()
     if user is None:
-        return jsonify({'msg':'email o contraseña incorrecta'}),401
+        return jsonify({'msg':'email incorrecto'}),401
+    check_password = bcrypt.check_password_hash(user.password, password)
+    if check_password is False :
+        return jsonify({'msg':'contraseña incorrecta'}),401
+
     
     access_token=create_access_token(identity=user.id)
     return jsonify({'token':access_token, 'user_id':user.id})

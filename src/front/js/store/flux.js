@@ -14,7 +14,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					initial: "white"
 				}
 			],
-			user: null,
+			user_id: null,
 			storeToken : false
 		},
 		actions: {
@@ -54,6 +54,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// const password ='8264'
 
 				// const url = 'https://studious-space-meme-pjg46j5xjxxx3xww-3000.app.github.dev/login'
+				console.log(newLogin)
 				const resp = await fetch(process.env.BACKEND_URL + "/api/login", {
 					method: "POST",
 					headers: {"Content-Type":"application/json"},
@@ -64,7 +65,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				// Guarda el token en la localStorage
 				// También deberías almacenar el usuario en la store utilizando la función setItem
 				localStorage.setItem("jwt-token", data.token);
-				setStore({user: data.user})
+				setStore({user_id: data.user_id})
+				console.log(data)
 				return data
 			},
 			// private : async()=>{
@@ -93,6 +95,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					body: JSON.stringify(bodyData)
 				})
 				const data = await resp.json()
+				console.log(data)
 				return data
 			},
 			private: (token)=>{

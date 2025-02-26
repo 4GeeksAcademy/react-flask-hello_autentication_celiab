@@ -10,7 +10,7 @@ export const Private = () => {
 return  <div className = "d-flex justify-content-center">
             <h1 className = "m-5">This is your private area</h1>
 
-                    <Link to="/home">
+                    <Link to="/">
                         <button type="submit" className="btn btn-primary mt-5"
                         >Return Home</button>
                     </Link>
